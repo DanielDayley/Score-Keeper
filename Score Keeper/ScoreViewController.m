@@ -36,43 +36,47 @@ static CGFloat sideMargin = 15;
     previousY = 0;
     sideMargin = 15;
     
-    [self addScoreView:0];
-    [self addScoreView:1];
+    [self addScoreView:10];
 }
 
 - (void)addScoreView:(NSInteger)index {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, previousY, viewWidth, viewHeight)];
+    CGFloat scrollViewHeight = 0;
     
-    UITextField *name = [[UITextField alloc] initWithFrame:CGRectMake(sideMargin, viewHeight / 2 - 15, 125, 30)];
-    name.placeholder = @"Name";
-    name.borderStyle = UITextBorderStyleRoundedRect;
-    
-    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(viewWidth / 2, viewHeight / 2 - 25, 50, 50)];
-    scoreLabel.text = @"0";
-    [self.scoreLabels insertObject:scoreLabel atIndex:index];
-    
-    UIStepper *stepper = [[UIStepper alloc] initWithFrame:CGRectMake(viewWidth - 94 - sideMargin, viewHeight / 2 - 15, 0, 20)];
-    stepper.maximumValue = 100;
-    stepper.minimumValue = 0;
-    stepper.stepValue = 5;
-    stepper.tag = index;
-    
-    [stepper addTarget:self action:@selector(changeLabelAtIndex:) forControlEvents:UIControlEventValueChanged];
-    
-    [view addSubview:name];
-    [view addSubview:scoreLabel];
-    [view addSubview:stepper];
-    
-    [self.scrollView addSubview:view];
-    
-    previousY += view.frame.size.height + 1;
+    for (int i = 0; i <= index; i++) {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, previousY, viewWidth, viewHeight)];
+        
+        UITextField *name = [[UITextField alloc] initWithFrame:CGRectMake(sideMargin, viewHeight / 2 - 15, 125, 30)];
+        name.placeholder = @"Name";
+        name.borderStyle = UITextBorderStyleRoundedRect;
+        
+        UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(viewWidth / 2, viewHeight / 2 - 25, 50, 50)];
+        scoreLabel.text = @"0";
+        [self.scoreLabels insertObject:scoreLabel atIndex:i];
+        
+        UIStepper *stepper = [[UIStepper alloc] initWithFrame:CGRectMake(viewWidth - 94 - sideMargin, viewHeight / 2 - 15, 0, 20)];
+        stepper.maximumValue = 100;
+        stepper.minimumValue = 0;
+        stepper.stepValue = 5;
+        stepper.tag = index;
+        
+        [stepper addTarget:self action:@selector(changeLabelAtIndex:) forControlEvents:UIControlEventValueChanged];
+        
+        [view addSubview:name];
+        [view addSubview:scoreLabel];
+        [view addSubview:stepper];
+        
+        [self.scrollView addSubview:view];
+        
+        previousY += view.frame.size.height + 1;
+    }
+    scrollViewHeight = previousY;
+    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, scrollViewHeight);
 }
 
 - (void)changeLabelAtIndex:(UIStepper *)sender {
-    NSLog(@"Are we there yet?");
     UILabel *scoreLabel = [self.scoreLabels objectAtIndex:sender.tag];
-    NSLog(@"%@", scoreLabel.text);
-    [scoreLabel setText:@"10"];
+    NSString *value = [NSString stringWithFormat:@"%f", sender.stepValue];
+    [scoreLabel setText:value];
 }
 
 - (void)didReceiveMemoryWarning {
