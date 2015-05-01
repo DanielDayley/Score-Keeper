@@ -18,10 +18,9 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
+    // Make a scoreViewController our root view for our navigation controller and the window the root for our navcontroller.
     ScoreViewController *rootViewController = [[ScoreViewController alloc] init];
-    
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-    
     self.window.rootViewController = navigationController;
     
     return YES;

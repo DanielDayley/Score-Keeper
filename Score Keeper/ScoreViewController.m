@@ -8,12 +8,11 @@
 
 #import "ScoreViewController.h"
 
-@interface ScoreViewController () {
+@interface ScoreViewController () <UITextFieldDelegate> { // Use to make the keyboard hide on return
     CGFloat previousY;
 }
 
 @end
-
 @implementation ScoreViewController
 
 static CGFloat viewWidth;
@@ -26,7 +25,6 @@ static CGFloat sideMargin = 15;
     self.scoreLabels = [[NSMutableArray alloc] init];
     
     self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    
     [self.view addSubview:self.scrollView];
     
     viewWidth = self.scrollView.frame.size.width;
@@ -48,35 +46,45 @@ static CGFloat sideMargin = 15;
         UITextField *name = [[UITextField alloc] initWithFrame:CGRectMake(sideMargin, viewHeight / 2 - 15, 125, 30)];
         name.placeholder = @"Name";
         name.borderStyle = UITextBorderStyleRoundedRect;
-        
+        name.delegate = self;
         UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(viewWidth / 2, viewHeight / 2 - 25, 50, 50)];
         scoreLabel.text = @"0";
         [self.scoreLabels insertObject:scoreLabel atIndex:i];
         
+        // Render a stepper for the view
         UIStepper *stepper = [[UIStepper alloc] initWithFrame:CGRectMake(viewWidth - 94 - sideMargin, viewHeight / 2 - 15, 0, 20)];
         stepper.maximumValue = 100;
         stepper.minimumValue = 0;
-        stepper.stepValue = 5;
-        stepper.tag = index;
+        stepper.stepValue = 1;
+        stepper.tag = i;
         
+        // Configure the stepper to send a message to change the label
         [stepper addTarget:self action:@selector(changeLabelAtIndex:) forControlEvents:UIControlEventValueChanged];
         
+        // Render the view
         [view addSubview:name];
         [view addSubview:scoreLabel];
         [view addSubview:stepper];
         
+        // Add the view to the display
         [self.scrollView addSubview:view];
         
+        // Update the origin hieght for next render
         previousY += view.frame.size.height + 1;
     }
     scrollViewHeight = previousY;
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, scrollViewHeight);
 }
 
+- (BOOL) textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
+}
+
+// This method recieves a label from objectAtIndex:sender.tag (the stepper) and updates teh label text
 - (void)changeLabelAtIndex:(UIStepper *)sender {
-    UILabel *scoreLabel = [self.scoreLabels objectAtIndex:sender.tag];
-    NSString *value = [NSString stringWithFormat:@"%f", sender.stepValue];
-    [scoreLabel setText:value];
+    UILabel *scoreLabel = /*I like pie*/ [self.scoreLabels objectAtIndex:sender.tag];
+    [scoreLabel setText:[NSString stringWithFormat:@"%d", (int)sender.value]];
 }
 
 - (void)didReceiveMemoryWarning {
